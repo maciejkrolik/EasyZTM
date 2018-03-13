@@ -7,6 +7,30 @@
              Title="{Binding Title}">
 
     <StackLayout>
+
+        <ListView ItemsSource="{Binding BusList}"
+                  RowHeight="50"
+                  ItemTapped="ListView_ItemTapped">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical"
+                                     Padding="5, 0, 0, 0">
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text="{Binding RouteId}" 
+                                       Font="Bold, Small"/>
+                                <Label Text="-" 
+                                       Font="Bold, Small"/>
+                                <Label Text="{Binding Minutes}" 
+                                       Font="Bold, Small"/>
+                            </StackLayout>
+                            <Label Text="{Binding Headsign, StringFormat='Kierunek: {0}'}" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
     </StackLayout>
 
 </ContentPage>

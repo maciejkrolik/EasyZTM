@@ -32,6 +32,7 @@ namespace EasyZTM
             containerRegistry.RegisterForNavigation<BusStopPage, BusStopPageViewModel>();
 
             containerRegistry.Register<ISqlBusStopService, SqlBusStopService>();
+            containerRegistry.Register<IJsonBusStopService, JsonBusStopService>();
         }
     }
 }
