@@ -28,16 +28,36 @@ namespace EasyZTM.ViewModels
             set { SetProperty(ref _busList, value); }
         }
 
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set { SetProperty(ref _isLoading, value); }
+        }
+
+        private bool _isListVisible;
+        public bool IsListVisible
+        {
+            get { return _isListVisible; }
+            set { SetProperty(ref _isListVisible, value); }
+        }
+
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
             if (parameters.ContainsKey("description"))
             {
+                IsListVisible = false;
+                IsLoading = true;
+
                 _busStopDescription = (string)parameters["description"];
                 _busStopId = (int)parameters["stopId"];
 
                 Title = $"{_busStopDescription} ({_busStopId.ToString()})";
 
                 BusList = await _jsonBusStopService.GetAllBusesAsync(_busStopId);
+
+                IsLoading = false;
+                IsListVisible = true;
             }
         }
     }

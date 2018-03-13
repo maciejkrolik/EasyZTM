@@ -34,8 +34,8 @@ namespace EasyZTM.Services
         public SqlBusStop GetBusStop(int stopId)
         {
             var busStop = _conn.Table<SqlBusStop>()
-                              .Where(x => x.StopId == stopId)
-                              .SingleOrDefault();
+                               .Where(x => x.StopId == stopId)
+                               .SingleOrDefault();
             return busStop;
         }
 
@@ -47,8 +47,8 @@ namespace EasyZTM.Services
         public List<SqlBusStop> GetAllFavouriteStops()
         {
             var busStops = _conn.Table<SqlBusStop>()
-                               .Where(x => x.isFavourite == true)
-                               .ToList();
+                                .Where(x => x.isFavourite == true)
+                                .ToList();
 
             return busStops;
         }

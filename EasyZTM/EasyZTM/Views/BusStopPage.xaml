@@ -10,6 +10,7 @@
 
         <ListView ItemsSource="{Binding BusList}"
                   RowHeight="50"
+                  IsVisible="{Binding IsListVisible}"
                   ItemTapped="ListView_ItemTapped">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -30,6 +31,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <ActivityIndicator IsRunning="{Binding IsLoading}"
+                           IsVisible="{Binding IsLoading}"/>
 
     </StackLayout>
 
