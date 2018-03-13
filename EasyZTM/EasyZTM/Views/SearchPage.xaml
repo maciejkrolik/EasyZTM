@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+             x:Class="EasyZTM.Views.SearchPage"
+             Title="{Binding Title}">
+
+    <StackLayout>
+
+        <SearchBar Text="{Binding Keyword}"
+                   SearchCommand="{Binding SearchCommand}"
+                   Placeholder="Wpisz nazwę przystanku" />
+
+        <ListView ItemsSource="{Binding Suggestions}"
+                  ItemTapped="ListView_ItemTapped">
+            <ListView.Behaviors>
+                <b:EventToCommandBehavior Command="{Binding ItemTappedCommand}"
+                                          EventName="ItemTapped"
+                                          EventArgsParameterPath="Item" />
+            </ListView.Behaviors>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding Description}" 
+                              Detail="{Binding StopId}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+    </StackLayout>
+
+</ContentPage>
