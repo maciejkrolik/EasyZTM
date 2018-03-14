@@ -6,6 +6,11 @@
              x:Class="EasyZTM.Views.BusStopPage"
              Title="{Binding Title}">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="{Binding ImgPath}"
+                     Command="{Binding FavouriteButtonClicked}"/>
+    </ContentPage.ToolbarItems>
+
     <StackLayout>
 
         <ListView ItemsSource="{Binding BusList}"

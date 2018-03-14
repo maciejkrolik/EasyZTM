@@ -1,6 +1,6 @@
-﻿using EasyZTM.ViewModels;
+﻿using EasyZTM.Services;
+using EasyZTM.ViewModels;
 using EasyZTM.Views;
-using EasyZTM.Services;
 using Prism;
 using Prism.Ioc;
 using Prism.Unity;

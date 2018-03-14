@@ -1,27 +1,29 @@
 ﻿using EasyZTM.Models;
 using EasyZTM.Services;
-using Prism.Commands;
-using Prism.Mvvm;
-using Prism.Navigation;
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using Prism.Commands;
+using Prism.Events;
+using Prism.Navigation;
 
 namespace EasyZTM.ViewModels
 {
     public class BusStopPageViewModel : ViewModelBase
     {
-        private string _busStopDescription;
-        private int _busStopId;
+        private SqlBusStop _sqlBusStop;
         private IJsonBusStopService _jsonBusStopService;
-        private List<Delay> _busList;
+        private ISqlBusStopService _sqlBusStopService;
+        private IEventAggregator _eventAggregator;
 
-        public BusStopPageViewModel(INavigationService navigationService, IJsonBusStopService jsonBusStopService)
+        public BusStopPageViewModel(INavigationService navigationService, IJsonBusStopService jsonBusStopService,
+                                    ISqlBusStopService sqlBusStopService, IEventAggregator eventAggregator)
             : base(navigationService)
         {
             _jsonBusStopService = jsonBusStopService;
+            _sqlBusStopService = sqlBusStopService;
+            _eventAggregator = eventAggregator;
         }
 
+        private List<Delay> _busList;
         public List<Delay> BusList
         {
             get { return _busList; }
@@ -42,23 +44,67 @@ namespace EasyZTM.ViewModels
             set { SetProperty(ref _isListVisible, value); }
         }
 
+        private string _imgPath;
+        public string ImgPath
+        {
+            get { return _imgPath; }
+            set { SetProperty(ref _imgPath, value); }
+        }
+
+        private DelegateCommand _favouriteButtonClicked;
+        public DelegateCommand FavouriteButtonClicked =>
+            _favouriteButtonClicked ?? (_favouriteButtonClicked = new DelegateCommand(ExecuteFavouriteButtonClicked));
+
+        private void ExecuteFavouriteButtonClicked()
+        {
+            bool IsFavourite = SetFavouriteImage();
+            if (IsFavourite)
+                _sqlBusStopService.DeleteBusStopFromFavourite(_sqlBusStop.StopId);
+            else
+                _sqlBusStopService.AddBusStopToFavourites(_sqlBusStop.StopId);
+
+            _eventAggregator.GetEvent<AddToFavouriteEvent>().Publish();
+        }
+
+        private bool SetFavouriteImage()
+        {
+            if (_sqlBusStop.isFavourite)
+            {
+                ImgPath = "Add";
+                return true;
+            }
+            else
+            {
+                ImgPath = "Delete";
+                return false;
+            }
+        }
+
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
-            if (parameters.ContainsKey("description"))
+            if (parameters.ContainsKey("busStop"))
             {
                 IsListVisible = false;
                 IsLoading = true;
 
-                _busStopDescription = (string)parameters["description"];
-                _busStopId = (int)parameters["stopId"];
+                _sqlBusStop = (SqlBusStop)parameters["busStop"];
 
-                Title = $"{_busStopDescription} ({_busStopId.ToString()})";
+                Title = $"{_sqlBusStop.Description} ({_sqlBusStop.StopId.ToString()})";
 
-                BusList = await _jsonBusStopService.GetAllBusesAsync(_busStopId);
+                var test = _sqlBusStop.isFavourite;
+                if (test == true)
+                    ImgPath = "Delete";
+                else
+                    ImgPath = "Add";
+
+                BusList = await _jsonBusStopService.GetAllBusesAsync(_sqlBusStop.StopId);
 
                 IsLoading = false;
                 IsListVisible = true;
             }
         }
     }
+
+    public class AddToFavouriteEvent : PubSubEvent
+    { };
 }
