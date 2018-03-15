@@ -14,23 +14,24 @@
     <StackLayout>
 
         <ListView ItemsSource="{Binding BusList}"
-                  RowHeight="50"
+                  RowHeight="56"
                   IsVisible="{Binding IsListVisible}"
                   ItemTapped="ListView_ItemTapped">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
                         <StackLayout Orientation="Vertical"
+                                     VerticalOptions="CenterAndExpand"
                                      Padding="5, 0, 0, 0">
                             <StackLayout Orientation="Horizontal">
                                 <Label Text="{Binding RouteId}" 
-                                       Font="Bold, Small"/>
+                                       Font="Bold, Large"/>
                                 <Label Text="-" 
-                                       Font="Bold, Small"/>
+                                       Font="Bold, Large"/>
                                 <Label Text="{Binding Minutes}" 
-                                       Font="Bold, Small"/>
+                                       Font="Bold, Large"/>
                             </StackLayout>
-                            <Label Text="{Binding Headsign, StringFormat='Kierunek: {0}'}" />
+                            <Label Text="{Binding Headsign, StringFormat='Kierunek: {0}'}"/>
                         </StackLayout>
                     </ViewCell>
                 </DataTemplate>
@@ -38,7 +39,8 @@
         </ListView>
 
         <ActivityIndicator IsRunning="{Binding IsLoading}"
-                           IsVisible="{Binding IsLoading}"/>
+                           IsVisible="{Binding IsLoading}"
+                           VerticalOptions="CenterAndExpand"/>
 
     </StackLayout>
 

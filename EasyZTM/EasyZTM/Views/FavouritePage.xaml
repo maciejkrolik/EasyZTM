@@ -9,16 +9,17 @@
 
     <StackLayout>
         <ListView ItemsSource="{Binding FavouriteList}"
-                  ItemTapped="ListView_ItemTapped">
+                  ItemTapped="ListView_ItemTapped"
+                  RowHeight="56">
             <ListView.Behaviors>
                 <b:EventToCommandBehavior Command="{Binding ItemTappedCommand}"
                                           EventName="ItemTapped"
-                                          EventArgsParameterPath="Item" />
+                                          EventArgsParameterPath="Item"/>
             </ListView.Behaviors>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextCell Text="{Binding Description}"
-                              Detail="{Binding StopId}" />
+                              Detail="{Binding StopId}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

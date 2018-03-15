@@ -25,21 +25,25 @@ namespace EasyZTM.ViewModels
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
-            if (parameters.ContainsKey("busStop"))
+            IsListVisible = false;
+            IsLoading = true;
+
+            _sqlBusStop = (SqlBusStop)parameters["busStop"];
+
+            Title = $"{_sqlBusStop.Description} ({_sqlBusStop.StopId.ToString()})";
+            SetFavouriteImage();
+
+            try
             {
-                IsListVisible = false;
-                IsLoading = true;
-
-                _sqlBusStop = (SqlBusStop)parameters["busStop"];
-
-                Title = $"{_sqlBusStop.Description} ({_sqlBusStop.StopId.ToString()})";
-                SetFavouriteImage();
-
                 BusList = await _jsonBusStopService.GetAllBusesAsync(_sqlBusStop.StopId);
-
-                IsLoading = false;
-                IsListVisible = true;
             }
+            catch (System.Net.Http.HttpRequestException)
+            {
+                Title = "Błąd serwera";
+            }
+
+            IsLoading = false;
+            IsListVisible = true;
         }
 
         private void SetFavouriteImage()
