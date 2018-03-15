@@ -23,6 +23,37 @@ namespace EasyZTM.ViewModels
             _eventAggregator = eventAggregator;
         }
 
+        public async override void OnNavigatedTo(NavigationParameters parameters)
+        {
+            if (parameters.ContainsKey("busStop"))
+            {
+                IsListVisible = false;
+                IsLoading = true;
+
+                _sqlBusStop = (SqlBusStop)parameters["busStop"];
+
+                Title = $"{_sqlBusStop.Description} ({_sqlBusStop.StopId.ToString()})";
+                SetFavouriteImage();
+
+                BusList = await _jsonBusStopService.GetAllBusesAsync(_sqlBusStop.StopId);
+
+                IsLoading = false;
+                IsListVisible = true;
+            }
+        }
+
+        private void SetFavouriteImage()
+        {
+            if (!_sqlBusStop.isFavourite)
+            {
+                ImgPath = "ic_favorite_border.png";
+            }
+            else
+            {
+                ImgPath = "ic_favorite.png";
+            }
+        }
+
         private List<Delay> _busList;
         public List<Delay> BusList
         {
@@ -57,51 +88,20 @@ namespace EasyZTM.ViewModels
 
         private void ExecuteFavouriteButtonClicked()
         {
-            bool IsFavourite = SetFavouriteImage();
-            if (IsFavourite)
-                _sqlBusStopService.DeleteBusStopFromFavourite(_sqlBusStop.StopId);
-            else
-                _sqlBusStopService.AddBusStopToFavourites(_sqlBusStop.StopId);
-
-            _eventAggregator.GetEvent<AddToFavouriteEvent>().Publish();
-        }
-
-        private bool SetFavouriteImage()
-        {
             if (_sqlBusStop.isFavourite)
             {
-                ImgPath = "Add";
-                return true;
+                _sqlBusStopService.DeleteBusStopFromFavourite(_sqlBusStop.StopId);
+                _sqlBusStop.isFavourite = false;
+                SetFavouriteImage();
             }
             else
             {
-                ImgPath = "Delete";
-                return false;
+                _sqlBusStopService.AddBusStopToFavourites(_sqlBusStop.StopId);
+                _sqlBusStop.isFavourite = true;
+                SetFavouriteImage();
             }
-        }
 
-        public async override void OnNavigatedTo(NavigationParameters parameters)
-        {
-            if (parameters.ContainsKey("busStop"))
-            {
-                IsListVisible = false;
-                IsLoading = true;
-
-                _sqlBusStop = (SqlBusStop)parameters["busStop"];
-
-                Title = $"{_sqlBusStop.Description} ({_sqlBusStop.StopId.ToString()})";
-
-                var test = _sqlBusStop.isFavourite;
-                if (test == true)
-                    ImgPath = "Delete";
-                else
-                    ImgPath = "Add";
-
-                BusList = await _jsonBusStopService.GetAllBusesAsync(_sqlBusStop.StopId);
-
-                IsLoading = false;
-                IsListVisible = true;
-            }
+            _eventAggregator.GetEvent<AddToFavouriteEvent>().Publish();
         }
     }
 

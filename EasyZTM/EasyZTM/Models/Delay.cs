@@ -25,10 +25,10 @@ namespace EasyZTM.Models
         {
             TimeSpan estimetedMinutes = TimeSpan.Parse(EstimatedTime);
             TimeSpan diff = estimetedMinutes - DateTime.Now.TimeOfDay;
-            if (diff.Minutes == 0 || diff.Minutes == 1)
+            if (diff.Minutes == 0)
                 return "Odjazd!";
             else
-                return $"za {Convert.ToString(diff.Minutes - 1)} min";
+                return $"za {Convert.ToString(diff.Minutes)} min";
         }
     }
 }

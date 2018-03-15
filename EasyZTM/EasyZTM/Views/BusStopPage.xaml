@@ -7,7 +7,7 @@
              Title="{Binding Title}">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="{Binding ImgPath}"
+        <ToolbarItem Icon="{Binding ImgPath}"
                      Command="{Binding FavouriteButtonClicked}"/>
     </ContentPage.ToolbarItems>
 
