@@ -52,14 +52,21 @@ namespace EasyZTM.ViewModels
 
         private async Task PopulateListView()
         {
-            try
+            int execCounter = 0;
+            while (execCounter < 3)
             {
-                SetTitle();
-                BusList = await _jsonBusStopService.GetAllBusesAsync(_sqlBusStop.StopId);
-            }
-            catch (System.Net.Http.HttpRequestException)
-            {
-                Title = "Błąd serwera";
+                try
+                {
+                    SetTitle();
+                    BusList = await _jsonBusStopService.GetAllBusesAsync(_sqlBusStop.StopId);
+                    execCounter++;
+                    break;
+                }
+                catch (System.Net.Http.HttpRequestException)
+                {
+                    Title = "Błąd serwera";
+                    execCounter++;
+                }
             }
         }
 
