@@ -23,8 +23,8 @@ namespace EasyZTM.Models
 
         public string CalculateMinutes()
         {
-            TimeSpan estimetedMinutes = TimeSpan.Parse(EstimatedTime);
-            TimeSpan diff = estimetedMinutes - DateTime.Now.TimeOfDay;
+            TimeSpan estimatedMinutes = TimeSpan.Parse(EstimatedTime);
+            TimeSpan diff = estimatedMinutes - DateTime.Now.TimeOfDay;
             if (diff.Minutes == 0)
                 return "Odjazd!";
             else

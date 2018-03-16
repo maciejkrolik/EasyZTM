@@ -16,7 +16,10 @@
         <ListView ItemsSource="{Binding BusList}"
                   RowHeight="56"
                   IsVisible="{Binding IsListVisible}"
-                  ItemTapped="ListView_ItemTapped">
+                  ItemTapped="ListView_ItemTapped"
+                  IsPullToRefreshEnabled="True"
+                  RefreshCommand="{Binding RefreshCommand}"
+                  IsRefreshing="{Binding IsPullToRefreshActive}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -38,8 +41,8 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <ActivityIndicator IsRunning="{Binding IsLoading}"
-                           IsVisible="{Binding IsLoading}"
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
                            VerticalOptions="CenterAndExpand"/>
 
     </StackLayout>

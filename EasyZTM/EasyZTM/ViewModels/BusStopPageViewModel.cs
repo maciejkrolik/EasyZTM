@@ -1,6 +1,7 @@
 ﻿using EasyZTM.Models;
 using EasyZTM.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Navigation;
@@ -26,23 +27,14 @@ namespace EasyZTM.ViewModels
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
             IsListVisible = false;
-            IsLoading = true;
+            IsBusy = true;
 
             _sqlBusStop = (SqlBusStop)parameters["busStop"];
 
-            Title = $"{_sqlBusStop.Description} ({_sqlBusStop.StopId.ToString()})";
             SetFavouriteImage();
+            await PopulateListView();
 
-            try
-            {
-                BusList = await _jsonBusStopService.GetAllBusesAsync(_sqlBusStop.StopId);
-            }
-            catch (System.Net.Http.HttpRequestException)
-            {
-                Title = "Błąd serwera";
-            }
-
-            IsLoading = false;
+            IsBusy = false;
             IsListVisible = true;
         }
 
@@ -58,6 +50,24 @@ namespace EasyZTM.ViewModels
             }
         }
 
+        private async Task PopulateListView()
+        {
+            try
+            {
+                SetTitle();
+                BusList = await _jsonBusStopService.GetAllBusesAsync(_sqlBusStop.StopId);
+            }
+            catch (System.Net.Http.HttpRequestException)
+            {
+                Title = "Błąd serwera";
+            }
+        }
+
+        private void SetTitle()
+        {
+            Title = $"{_sqlBusStop.Description} ({_sqlBusStop.StopId.ToString()})";
+        }
+
         private List<Delay> _busList;
         public List<Delay> BusList
         {
@@ -65,11 +75,11 @@ namespace EasyZTM.ViewModels
             set { SetProperty(ref _busList, value); }
         }
 
-        private bool _isLoading;
-        public bool IsLoading
+        private bool _isBusy;
+        public bool IsBusy
         {
-            get { return _isLoading; }
-            set { SetProperty(ref _isLoading, value); }
+            get { return _isBusy; }
+            set { SetProperty(ref _isBusy, value); }
         }
 
         private bool _isListVisible;
@@ -77,6 +87,13 @@ namespace EasyZTM.ViewModels
         {
             get { return _isListVisible; }
             set { SetProperty(ref _isListVisible, value); }
+        }
+
+        private bool _isPullToRefreshActive;
+        public bool IsPullToRefreshActive
+        {
+            get { return _isPullToRefreshActive; }
+            set { SetProperty(ref _isPullToRefreshActive, value); }
         }
 
         private string _imgPath;
@@ -106,6 +123,16 @@ namespace EasyZTM.ViewModels
             }
 
             _eventAggregator.GetEvent<AddToFavouriteEvent>().Publish();
+        }
+
+        private DelegateCommand _refreshCommand;
+        public DelegateCommand RefreshCommand =>
+            _refreshCommand ?? (_refreshCommand = new DelegateCommand(ExecuteRefreshCommand));
+
+        private async void ExecuteRefreshCommand()
+        {
+            await PopulateListView();
+            IsPullToRefreshActive = false;
         }
     }
 
